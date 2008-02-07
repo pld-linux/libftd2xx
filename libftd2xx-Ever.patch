@@ -1,0 +1,14 @@
+--- libftd2xx-0.4.13/lib_table/ftdi_table.c.orig	2006-11-20 18:22:56.000000000 +0100
++++ libftd2xx-0.4.13/lib_table/ftdi_table.c	2008-02-07 20:21:24.657572243 +0100
+@@ -14,7 +14,10 @@
+ 	{ 0x0403, 0x6010 },			/* 2232C */
+ 	{ 0x0403, 0x6001 },			/* AM or BM */
+ 	{ 0x0403, 0x6006 },			/* Direct Driver PID */
+-	{ 0x0403, 0xFAC1 }			/* Scope */
++	{ 0x0403, 0xFAC1 },			/* Scope */
++	{ 0x0403, 0xE520 },			/* EVER Sp z o.o. PID */
++	{ 0x0403, 0xE521 },			/* EVER Sp z o.o. PID */
++	{ 0x0403, 0xE522 }			/* EVER Sp z o.o. PID */
+ };
+ 
+ /*
