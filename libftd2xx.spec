@@ -1,15 +1,14 @@
 Summary:	D2XX direct drivers for FTDI devices
 Summary(pl.UTF-8):	Sterowniki bezpośrednie D2XX dla urządzeń FTDI
 Name:		libftd2xx
-Version:	0.4.13
+Version:	1.1.0
 Release:	1
 License:	as is
 Group:		Libraries
 Source0:	http://www.ftdichip.com/Drivers/D2XX/Linux/%{name}%{version}.tar.gz
-# Source0-md5:	6c06de2b4771e6cd67b9fe2054ec8a4d
-Patch0:		%{name}-Ever.patch
+# Source0-md5:	f2c6f448233768e05043854ee4b41088
 URL:		http://www.ftdichip.com/Drivers/D2XX.htm
-ExclusiveArch:	%{ix86}
+ExclusiveArch:	%{ix86} %{x8664}
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -60,25 +59,22 @@ Statyczna biblioteka ftd2xx.
 
 %prep
 %setup -q -c
-%patch0 -p1
-
-# kill precompiled objects which have sources included
-rm lib_table/{*.o,*.so} sample/Simple/simple
 
 %build
-%{__make} -C lib_table \
-	CC="%{__cc}" \
-	CFLAGS="%{rpmcflags} -DLINUX -D_RELEASE"
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}/ftd2xx}
 
-install libftd2xx.so.0.4.13 $RPM_BUILD_ROOT%{_libdir}
-ln -s libftd2xx.so.0.4.13 $RPM_BUILD_ROOT%{_libdir}/libftd2xx.so.0
-ln -s libftd2xx.so.0.4.13 $RPM_BUILD_ROOT%{_libdir}/libftd2xx.so
-install lib_table/libd2xx_table.so $RPM_BUILD_ROOT%{_libdir}
-install static_lib/libftd2xx.a.0.4.13 $RPM_BUILD_ROOT%{_libdir}/libftd2xx.a
+ARCH=i386
+%ifarch %{x8664}
+ARCH=x86_64
+%endif
+
+install -m755 ${ARCH}/libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}
+ln -s libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libftd2xx.so.0
+ln -s libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libftd2xx.so
+install ${ARCH}/libftd2xx.a $RPM_BUILD_ROOT%{_libdir}/libftd2xx.a
 install WinTypes.h ftd2xx.h $RPM_BUILD_ROOT%{_includedir}/ftd2xx
 
 %clean
@@ -89,10 +85,8 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc Config.txt FAQ.txt README.dat ftd2xx.cfg
 %attr(755,root,root) %{_libdir}/libftd2xx.so.*.*.*
 %attr(755,root,root) %ghost %{_libdir}/libftd2xx.so.0
-%attr(755,root,root) %{_libdir}/libd2xx_table.so
 
 %files devel
 %defattr(644,root,root,755)
