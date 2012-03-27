@@ -60,8 +60,6 @@ Statyczna biblioteka ftd2xx.
 %prep
 %setup -q -c
 
-%build
-
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}/ftd2xx}
