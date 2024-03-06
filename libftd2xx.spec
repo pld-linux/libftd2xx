@@ -25,6 +25,8 @@ URL:		https://ftdichip.com/drivers/d2xx-drivers/
 ExclusiveArch:	%{ix86} %{x8664} armv6hl armv7hl armv7l aarch64 mips
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
+%define		_debugsource_packages	0
+
 %description
 D2XX drivers allow direct access to the USB device through a DLL.
 Application software can access the USB device through a series of
