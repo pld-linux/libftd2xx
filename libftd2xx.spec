@@ -1,14 +1,28 @@
 Summary:	D2XX direct drivers for FTDI devices
 Summary(pl.UTF-8):	Sterowniki bezpośrednie D2XX dla urządzeń FTDI
 Name:		libftd2xx
-Version:	1.1.0
+Version:	1.4.27
 Release:	1
 License:	as is
 Group:		Libraries
-Source0:	http://www.ftdichip.com/Drivers/D2XX/Linux/%{name}%{version}.tar.gz
-# Source0-md5:	f2c6f448233768e05043854ee4b41088
-URL:		http://www.ftdichip.com/Drivers/D2XX.htm
-ExclusiveArch:	%{ix86} %{x8664}
+Source0:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_32-1.4.27.tgz
+# Source0-md5:	2948931d8ee6dc0222220cccd733b807
+Source1:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_64-1.4.27.tgz
+# Source1-md5:	1480b8dc98b3bb3361edab57c0ebd034
+Source2:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-sf-1.4.27.tgz
+# Source2-md5:	5daae1c2c0c48fd82317250f6c73e843
+Source3:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v6-hf-1.4.27.tgz
+# Source3-md5:	91f92a0d2060083ce46d6bbbb605f8ee
+Source4:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-hf-1.4.27.tgz
+# Source4-md5:	d63bbb651a1ce1baa47658e3a0c2814f
+Source5:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v8-1.4.27.tgz
+# Source5-md5:	07d3466c98fd7926d6639d7bc17ec71d
+Source6:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-mips-eglibc-sf-1.4.27.tgz
+# Source6-md5:	7487e27ab7a07c80532ee69ae318fec1
+Source7:	https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-mips-eglibc-hf-1.4.27.tgz
+# Source7-md5:	e8f86c34dab76ad9feef62100d26b4a0
+URL:		https://ftdichip.com/drivers/d2xx-drivers/
+ExclusiveArch:	%{ix86} %{x8664} armv6hl armv7hl armv7l aarch64 mips
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -58,22 +72,41 @@ Static ftd2xx library.
 Statyczna biblioteka ftd2xx.
 
 %prep
+%ifarch %{ix86}
 %setup -q -c
+%endif
+%ifarch %{x8664}
+%setup -q -c -T -a1
+%endif
+%ifarch armv7l
+%setup -q -c -T -a2
+%endif
+%ifarch armv6hl
+%setup -q -c -T -a3
+%endif
+%ifarch armv7hl
+%setup -q -c -T -a4
+%endif
+%ifarch aarch64
+%setup -q -c -T -a5
+%endif
+%ifarch mips
+%if 0
+# FIXME: condition for soft-float on mips?
+%setup -q -c -T -a6
+%else
+%setup -q -c -T -a7
+%endif
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_libdir},%{_includedir}/ftd2xx}
 
-ARCH=i386
-%ifarch %{x8664}
-ARCH=x86_64
-%endif
-
-install -m755 ${ARCH}/libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}
-ln -s libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libftd2xx.so.0
+install -m755 release/build/libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}
 ln -s libftd2xx.so.%{version} $RPM_BUILD_ROOT%{_libdir}/libftd2xx.so
-install ${ARCH}/libftd2xx.a $RPM_BUILD_ROOT%{_libdir}/libftd2xx.a
-install WinTypes.h ftd2xx.h $RPM_BUILD_ROOT%{_includedir}/ftd2xx
+cp -p release/build/libftd2xx.a $RPM_BUILD_ROOT%{_libdir}/libftd2xx.a
+cp -p release/{WinTypes.h,ftd2xx.h} $RPM_BUILD_ROOT%{_includedir}/ftd2xx
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -84,11 +117,10 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %attr(755,root,root) %{_libdir}/libftd2xx.so.*.*.*
-%attr(755,root,root) %ghost %{_libdir}/libftd2xx.so.0
+%attr(755,root,root) %ghost %{_libdir}/libftd2xx.so
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/libftd2xx.so
 %{_includedir}/ftd2xx
 
 %files static
